@@ -15,6 +15,8 @@ function App() {
   const [swiper, setSwiper] = useState(null);
   const [jumpTo, setJumpTo] = useState('');
   const [dragOverIndex, setDragOverIndex] = useState(null);
+  const [replacementMode, setReplacementMode] = useState(false);
+  const [imageToReplace, setImageToReplace] = useState(null);
 
   useEffect(() => {
     fetch(API_URL)
@@ -90,8 +92,6 @@ function App() {
     const currentImage = images[swiper.realIndex];
     if (!currentImage) return;
 
-    const newFavorites = [...favorites];
-
     if (favorites.some(fav => fav && fav.id === currentImage.id)) {
       // Image already in favorites
       return;
@@ -100,12 +100,31 @@ function App() {
     const firstEmptyIndex = favorites.findIndex(slot => slot === null);
 
     if (firstEmptyIndex !== -1) {
+      const newFavorites = [...favorites];
       newFavorites[firstEmptyIndex] = currentImage;
+      updateFavorites(newFavorites);
     } else {
-      // If full, replace the first item. This is a simple fallback for the button.
-      newFavorites[0] = currentImage;
+      // List is full, enter replacement mode
+      setReplacementMode(true);
+      setImageToReplace(currentImage);
     }
-    updateFavorites(newFavorites);
+  };
+
+  const handleCancelReplacement = () => {
+    setReplacementMode(false);
+    setImageToReplace(null);
+  };
+
+  const handleFavoriteSlotClick = (index) => {
+    if (replacementMode && imageToReplace) {
+      const newFavorites = [...favorites];
+      newFavorites[index] = imageToReplace;
+      updateFavorites(newFavorites);
+      setReplacementMode(false);
+      setImageToReplace(null);
+    } else if (favorites[index]) {
+      setSelectedImage(favorites[index]); // Existing modal logic
+    }
   };
 
   return (
@@ -159,7 +178,14 @@ function App() {
           )}
         </div>
         <div className="add-to-favorites-section">
-          <button onClick={handleAddToFavorites} className="jump-button">Add to Favorites</button>
+          {!replacementMode ? (
+            <button onClick={handleAddToFavorites} className="jump-button">Add to Favorites</button>
+          ) : (
+            <div className="replacement-mode-controls">
+              <span>Click a slot to replace or </span>
+              <button onClick={handleCancelReplacement} className="jump-button">Cancel</button>
+            </div>
+          )}
         </div>
       </main>
 
@@ -169,10 +195,11 @@ function App() {
           {favorites.map((fav, index) => (
             <div
               key={index}
-              className={`favorite-slot ${dragOverIndex === index ? 'drag-over' : ''}`}
+              className={`favorite-slot ${dragOverIndex === index ? 'drag-over' : ''} ${replacementMode ? 'replacement-mode' : ''}`}
               onDragOver={(e) => handleDragOver(e, index)}
               onDragLeave={() => setDragOverIndex(null)}
               onDrop={(e) => handleDrop(e, index)}
+              onClick={() => handleFavoriteSlotClick(index)}
             >
               {fav ? (
                 <div className="favorite-item-container">

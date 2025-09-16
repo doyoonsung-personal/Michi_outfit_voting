@@ -147,6 +147,18 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.favorite-slot.replacement-mode {
+  border: 2px solid #DDA0DD; /* Highlight with theme color */
+  box-shadow: 0 0 10px #DDA0DD;
+  cursor: pointer;
+  animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
 .favorite-slot img {
   width: 100%;
   height: 100%;
@@ -202,4 +214,20 @@ body {
   max-width: 100%;
   max-height: 100%;
   display: block;
+}
+
+.add-to-favorites-section {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.replacement-mode-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1rem;
+  color: white;
+  font-size: 1.1rem;
+  text-align: center;
 }
