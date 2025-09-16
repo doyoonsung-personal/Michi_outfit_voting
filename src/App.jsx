@@ -92,6 +92,7 @@ function App() {
       <main className="main-content">
         <h1>Michi's First(?) Outfit Design Competition!!</h1>
         <div className="jump-section">
+          <span>Go to number: </span>
           <input
             type="number"
             value={jumpTo}
