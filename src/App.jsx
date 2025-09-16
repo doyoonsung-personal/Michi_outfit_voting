@@ -161,7 +161,6 @@ function App() {
                   <img
                     src={fav.image_url}
                     alt={fav.theme}
-                    onClick={() => setSelectedImage(fav)}
                   />
                   <div className="favorite-item-label">#{fav.id}</div>
                 </div>
