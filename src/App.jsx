@@ -116,11 +116,14 @@ function App() {
                 {favorites.map((fav, index) => (
                   <div key={index} className="favorite-slot">
                     {fav ? (
-                      <img
-                        src={fav.image_url}
-                        alt={fav.theme}
-                        onClick={() => setSelectedImage(fav)}
-                      />
+                      <div className="favorite-item-container">
+                        <img
+                          src={fav.image_url}
+                          alt={fav.theme}
+                          onClick={() => setSelectedImage(fav)}
+                        />
+                        <div className="favorite-item-label">#{fav.id}</div>
+                      </div>
                     ) : (
                       <div className="empty-slot">{index + 1}</div>
                     )}
@@ -135,7 +138,7 @@ function App() {
         {selectedImage && (
           <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <img src={selectedImage.image_url} alt={selectedImage.theme} />
+              <img src={selectedImage.image_url} alt={selected.theme} />
                <div className="art-info">
                   <p><strong>#{selectedImage.id}</strong> {selectedImage.theme || 'Untitled'}</p>
                   <p>by {selectedImage.artist || 'Unknown Artist'} ({selectedImage.sns_tag})</p>
