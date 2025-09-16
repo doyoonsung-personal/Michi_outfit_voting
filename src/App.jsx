@@ -10,7 +10,7 @@ const API_URL = 'https://art-gallery-api.doyoonsung.workers.dev/';
 
 function App() {
   const [images, setImages] = useState([]);
-  const [favorites, setFavorites] = useState(Array(10).fill(null));
+  const [favorites, setFavorites] = useState(Array(5).fill(null)); // Changed to 5
   const [selectedImage, setSelectedImage] = useState(null);
   const [swiper, setSwiper] = useState(null);
   const [jumpTo, setJumpTo] = useState('');
@@ -25,7 +25,13 @@ function App() {
   useEffect(() => {
     const savedFavorites = localStorage.getItem('art-favorites');
     if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
+      // Make sure loaded favorites match the new size
+      const loaded = JSON.parse(savedFavorites);
+      const resized = Array(5).fill(null);
+      for(let i = 0; i < 5; i++) {
+        if(loaded[i]) resized[i] = loaded[i];
+      }
+      setFavorites(resized);
     }
   }, []);
 
@@ -58,7 +64,7 @@ function App() {
   const handleJump = () => {
     const imageNumber = parseInt(jumpTo, 10);
     if (swiper && imageNumber > 0 && imageNumber <= images.length) {
-      swiper.slideTo(imageNumber - 1);
+      swiper.slideToLoop(imageNumber - 1); // Use slideToLoop for loop mode
     }
   };
 
@@ -77,6 +83,7 @@ function App() {
                   className="art-carousel"
                   onSwiper={setSwiper}
                   allowTouchMove={false}
+                  loop={true} // Enable looping
                 >
                   {images.map((image, index) => (
                     <SwiperSlide key={image.id}>
@@ -87,7 +94,7 @@ function App() {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className="art-item"
-                            onClick={() => setSelectedImage(image)} // Click to enlarge
+                            onClick={() => setSelectedImage(image)}
                           >
                             <img src={image.image_url} alt={image.theme} />
                             <div className="art-info">
@@ -124,7 +131,7 @@ function App() {
         </main>
 
         <aside className="favorites-sidebar">
-          <h2>Your Top 10</h2>
+          <h2>Your Top 5</h2>
           <Droppable droppableId="favorites" direction="vertical">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps} className="favorites-list">
