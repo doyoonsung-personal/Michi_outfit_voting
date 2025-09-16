@@ -84,6 +84,30 @@ function App() {
     }
   };
 
+  const handleAddToFavorites = () => {
+    if (!swiper || images.length === 0) return;
+
+    const currentImage = images[swiper.realIndex];
+    if (!currentImage) return;
+
+    const newFavorites = [...favorites];
+
+    if (favorites.some(fav => fav && fav.id === currentImage.id)) {
+      // Image already in favorites
+      return;
+    }
+
+    const firstEmptyIndex = favorites.findIndex(slot => slot === null);
+
+    if (firstEmptyIndex !== -1) {
+      newFavorites[firstEmptyIndex] = currentImage;
+    } else {
+      // If full, replace the first item. This is a simple fallback for the button.
+      newFavorites[0] = currentImage;
+    }
+    updateFavorites(newFavorites);
+  };
+
   return (
     <div className="app-container">
       <main className="main-content">
@@ -133,6 +157,9 @@ function App() {
           ) : (
             <div className="art-carousel">Loading...</div>
           )}
+        </div>
+        <div className="add-to-favorites-section">
+          <button onClick={handleAddToFavorites} className="jump-button">Add to Favorites</button>
         </div>
       </main>
 
