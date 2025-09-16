@@ -223,3 +223,28 @@ body {
   font-size: 1.1rem;
   text-align: center;
 }
+
+/* Swiper Button Styling */
+.swiper-button-prev,
+.swiper-button-next {
+  width: 40px; /* Increase width */
+  height: 40px; /* Increase height */
+  background-color: rgba(0, 0, 0, 0.3); /* Add a background for better visibility */
+  border-radius: 50%; /* Make them round */
+  color: var(--swiper-navigation-color); /* Use theme color */
+  font-size: 1.5rem; /* Make arrows larger */
+  transition: background-color 0.3s ease;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.swiper-button-prev {
+  left: 10px;
+}
+
+.swiper-button-next {
+  right: 10px;
+}
