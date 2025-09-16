@@ -110,6 +110,7 @@ function App() {
             slidesPerView={1}
             className="art-carousel"
             onSwiper={setSwiper}
+            allowTouchMove={false} // Prevents swiping from interfering with drag-and-drop
           >
             {images.map((image) => (
               <SwiperSlide key={image.id}>
