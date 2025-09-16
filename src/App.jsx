@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 import 'swiper/css';
+import 'swiper/css/navigation';
 import './App.css';
 
-// ❗ IMPORTANT: Replace with your actual Cloudflare Worker URL after you deploy it.
 const API_URL = 'https://art-gallery-api.doyoonsung.workers.dev/';
 
 function App() {
   const [images, setImages] = useState([]);
   const [favorites, setFavorites] = useState(Array(10).fill(null));
   const [selectedImage, setSelectedImage] = useState(null);
+  const [swiper, setSwiper] = useState(null);
+  const [jumpTo, setJumpTo] = useState('');
 
-  // Fetch data from your Worker API on component load
   useEffect(() => {
     fetch(API_URL)
       .then(res => res.json())
@@ -20,7 +22,6 @@ function App() {
       .catch(err => console.error("Failed to fetch images:", err));
   }, []);
 
-  // Load favorites from localStorage when the app starts
   useEffect(() => {
     const savedFavorites = localStorage.getItem('art-favorites');
     if (savedFavorites) {
@@ -28,22 +29,22 @@ function App() {
     }
   }, []);
 
-  // Handle the end of a drag event
   const onDragEnd = (result) => {
     const { source, destination } = result;
-
-    if (!destination) return; // Dropped outside a valid area
-
-    // Logic for dragging from the carousel to the favorites bar
+    if (!destination) return;
     if (source.droppableId === 'carousel' && destination.droppableId === 'favorites') {
       const newFavorites = [...favorites];
       const draggedImage = images[source.index];
-      
-      // Replace the item at the destination index
       newFavorites[destination.index] = draggedImage;
-      
       setFavorites(newFavorites);
       localStorage.setItem('art-favorites', JSON.stringify(newFavorites));
+    }
+  };
+
+  const handleJump = () => {
+    const imageNumber = parseInt(jumpTo, 10);
+    if (swiper && imageNumber > 0 && imageNumber <= images.length) {
+      swiper.slideTo(imageNumber - 1);
     }
   };
 
@@ -54,8 +55,15 @@ function App() {
           <h1>Art Gallery</h1>
           <Droppable droppableId="carousel" direction="horizontal" isDropDisabled={true}>
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                <Swiper spaceBetween={50} slidesPerView={1} className="art-carousel">
+              <div {...provided.droppableProps} ref={provided.innerRef} className="carousel-container">
+                <Swiper
+                  modules={[Navigation]}
+                  spaceBetween={50}
+                  slidesPerView={1}
+                  className="art-carousel"
+                  onSwiper={setSwiper}
+                  allowTouchMove={false}
+                >
                   {images.map((image, index) => (
                     <SwiperSlide key={image.id}>
                       <Draggable draggableId={image.id} index={index}>
@@ -81,6 +89,23 @@ function App() {
               </div>
             )}
           </Droppable>
+          <div className="navigation-controls">
+            <button onClick={() => swiper?.slidePrev()} className="nav-button">Prev</button>
+            <div className="jump-section">
+              <input
+                type="number"
+                value={jumpTo}
+                onChange={(e) => setJumpTo(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleJump()}
+                min="1"
+                max={images.length}
+                className="jump-input"
+                placeholder="#"
+              />
+              <button onClick={handleJump} className="jump-button">Go</button>
+            </div>
+            <button onClick={() => swiper?.slideNext()} className="nav-button">Next</button>
+          </div>
         </main>
 
         <aside className="favorites-sidebar">
@@ -107,7 +132,6 @@ function App() {
           </Droppable>
         </aside>
 
-        {/* Modal for viewing a selected image */}
         {selectedImage && (
           <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>

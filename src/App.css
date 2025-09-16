@@ -134,3 +134,47 @@ h1, h2 {
   border-radius: 4px;
   cursor: pointer;
 }
+
+.carousel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.navigation-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 600px;
+  max-width: 90vw;
+  margin-top: 1rem;
+}
+
+.nav-button, .jump-button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.nav-button:hover, .jump-button:hover {
+  background-color: #0056b3;
+}
+
+.jump-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jump-input {
+  width: 60px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+}
