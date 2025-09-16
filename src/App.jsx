@@ -31,14 +31,28 @@ function App() {
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
-    if (!destination) return;
-    if (source.droppableId === 'carousel' && destination.droppableId === 'favorites') {
-      const newFavorites = [...favorites];
-      const draggedImage = images[source.index];
-      newFavorites[destination.index] = draggedImage;
-      setFavorites(newFavorites);
-      localStorage.setItem('art-favorites', JSON.stringify(newFavorites));
+
+    if (!destination || source.droppableId !== 'carousel' || destination.droppableId !== 'favorites') {
+      return;
     }
+
+    const newFavorites = [...favorites];
+    const draggedImage = images[source.index];
+
+    if (favorites.some(fav => fav && fav.id === draggedImage.id)) {
+      return;
+    }
+
+    const firstEmptyIndex = favorites.findIndex(slot => slot === null);
+
+    if (firstEmptyIndex !== -1) {
+      newFavorites[firstEmptyIndex] = draggedImage;
+    } else {
+      newFavorites[destination.index] = draggedImage;
+    }
+
+    setFavorites(newFavorites);
+    localStorage.setItem('art-favorites', JSON.stringify(newFavorites));
   };
 
   const handleJump = () => {
@@ -138,7 +152,7 @@ function App() {
         {selectedImage && (
           <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <img src={selectedImage.image_url} alt={selected.theme} />
+              <img src={selectedImage.image_url} alt={selectedImage.theme} />
                <div className="art-info">
                   <p><strong>#{selectedImage.id}</strong> {selectedImage.theme || 'Untitled'}</p>
                   <p>by {selectedImage.artist || 'Unknown Artist'} ({selectedImage.sns_tag})</p>
