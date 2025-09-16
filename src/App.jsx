@@ -56,7 +56,7 @@ function App() {
     const draggedImage = images.find(img => img.id === imageId);
 
     if (!draggedImage || favorites.some(fav => fav && fav.id === draggedImage.id)) {
-      return; // Image not found or already in favorites
+      return;
     }
 
     const newFavorites = [...favorites];
@@ -102,33 +102,37 @@ function App() {
           <button onClick={handleJump} className="jump-button">Go</button>
         </div>
         <div className="carousel-container">
-          <Swiper
-            modules={[Navigation]}
-            navigation
-            loop
-            spaceBetween={50}
-            slidesPerView={1}
-            className="art-carousel"
-            onSwiper={setSwiper}
-            allowTouchMove={false} // Prevents swiping from interfering with drag-and-drop
-          >
-            {images.map((image) => (
-              <SwiperSlide key={image.id}>
-                <div
-                  className="art-item"
-                  draggable="true"
-                  onDragStart={(e) => handleDragStart(e, image)}
-                  onClick={() => setSelectedImage(image)}
-                >
-                  <img src={image.image_url} alt={image.theme} />
-                  <div className="art-info">
-                    <p><strong>#{image.id}</strong> {image.theme || 'Untitled'}</p>
-                    <p>by {image.artist || 'Unknown Artist'}</p>
+          {images.length > 0 ? (
+            <Swiper
+              modules={[Navigation]}
+              navigation
+              loop
+              spaceBetween={50}
+              slidesPerView={1}
+              className="art-carousel"
+              onSwiper={setSwiper}
+              allowTouchMove={false}
+            >
+              {images.map((image) => (
+                <SwiperSlide key={image.id}>
+                  <div
+                    className="art-item"
+                    draggable="true"
+                    onDragStart={(e) => handleDragStart(e, image)}
+                    onClick={() => setSelectedImage(image)}
+                  >
+                    <img src={image.image_url} alt={image.theme} />
+                    <div className="art-info">
+                      <p><strong>#{image.id}</strong> {image.theme || 'Untitled'}</p>
+                      <p>by {image.artist || 'Unknown Artist'}</p>
+                    </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="art-carousel">Loading...</div>
+          )}
         </div>
       </main>
 
