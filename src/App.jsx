@@ -56,7 +56,7 @@ function App() {
     const draggedImage = images.find(img => img.id === imageId);
 
     if (!draggedImage || favorites.some(fav => fav && fav.id === draggedImage.id)) {
-      return;
+      return; // Image not found or already in favorites
     }
 
     const newFavorites = [...favorites];
@@ -87,7 +87,7 @@ function App() {
   return (
     <div className="app-container">
       <main className="main-content">
-        <h1>Art Gallery</h1>
+        <h1>Michi's First(?) Outfit Design Competition!!</h1>
         <div className="jump-section">
           <input
             type="number"
