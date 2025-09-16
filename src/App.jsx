@@ -87,6 +87,7 @@ function App() {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className="art-item"
+                            onClick={() => setSelectedImage(image)} // Click to enlarge
                           >
                             <img src={image.image_url} alt={image.theme} />
                             <div className="art-info">
@@ -151,13 +152,12 @@ function App() {
 
         {selectedImage && (
           <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content">
               <img src={selectedImage.image_url} alt={selectedImage.theme} />
                <div className="art-info">
                   <p><strong>#{selectedImage.id}</strong> {selectedImage.theme || 'Untitled'}</p>
                   <p>by {selectedImage.artist || 'Unknown Artist'} ({selectedImage.sns_tag})</p>
                 </div>
-              <button onClick={() => setSelectedImage(null)}>Close</button>
             </div>
           </div>
         )}
