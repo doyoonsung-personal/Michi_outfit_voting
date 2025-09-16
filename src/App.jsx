@@ -14,7 +14,6 @@ function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [swiper, setSwiper] = useState(null);
   const [jumpTo, setJumpTo] = useState('');
-  const [dragOverIndex, setDragOverIndex] = useState(null);
   const [replacementMode, setReplacementMode] = useState(false);
   const [imageToReplace, setImageToReplace] = useState(null);
 
@@ -42,43 +41,6 @@ function App() {
     localStorage.setItem('art-favorites', JSON.stringify(newFavorites));
   };
 
-  const handleDragStart = (e, image) => {
-    e.dataTransfer.setData("imageId", image.id);
-  };
-
-  const handleDragOver = (e, index) => {
-    e.preventDefault();
-    setDragOverIndex(index);
-  };
-
-  const handleDrop = (e, dropIndex) => {
-    e.preventDefault();
-    setDragOverIndex(null);
-    const imageId = e.dataTransfer.getData("imageId");
-    const draggedImage = images.find(img => img.id === imageId);
-
-    if (!draggedImage || favorites.some(fav => fav && fav.id === draggedImage.id)) {
-      return; // Image not found or already in favorites
-    }
-
-    const newFavorites = [...favorites];
-    const isFull = !newFavorites.some(slot => slot === null);
-
-    if (isFull) {
-      newFavorites[dropIndex] = draggedImage;
-    } else {
-      if (newFavorites[dropIndex] === null) {
-        newFavorites[dropIndex] = draggedImage;
-      } else {
-        const firstEmptyIndex = newFavorites.findIndex(slot => slot === null);
-        if (firstEmptyIndex !== -1) {
-          newFavorites[firstEmptyIndex] = draggedImage;
-        }
-      }
-    }
-    updateFavorites(newFavorites);
-  };
-
   const handleJump = () => {
     const imageNumber = parseInt(jumpTo, 10);
     if (swiper && imageNumber > 0 && imageNumber <= images.length) {
@@ -93,7 +55,6 @@ function App() {
     if (!currentImage) return;
 
     if (favorites.some(fav => fav && fav.id === currentImage.id)) {
-      // Image already in favorites
       return;
     }
 
@@ -104,7 +65,6 @@ function App() {
       newFavorites[firstEmptyIndex] = currentImage;
       updateFavorites(newFavorites);
     } else {
-      // List is full, enter replacement mode
       setReplacementMode(true);
       setImageToReplace(currentImage);
     }
@@ -122,8 +82,8 @@ function App() {
       updateFavorites(newFavorites);
       setReplacementMode(false);
       setImageToReplace(null);
-    } else if (favorites[index]) {
-      setSelectedImage(favorites[index]); // Existing modal logic
+    } else if (favorites[index] && !replacementMode) { // Only view in full if not in replacement mode
+      setSelectedImage(favorites[index]);
     }
   };
 
@@ -154,14 +114,12 @@ function App() {
               slidesPerView={1}
               className="art-carousel"
               onSwiper={setSwiper}
-              allowTouchMove={false}
+              allowTouchMove={true} // Re-enable swiping
             >
               {images.map((image) => (
                 <SwiperSlide key={image.id}>
                   <div
                     className="art-item"
-                    draggable="true"
-                    onDragStart={(e) => handleDragStart(e, image)}
                     onClick={() => setSelectedImage(image)}
                   >
                     <img src={image.image_url} alt={image.theme} />
@@ -195,10 +153,7 @@ function App() {
           {favorites.map((fav, index) => (
             <div
               key={index}
-              className={`favorite-slot ${dragOverIndex === index ? 'drag-over' : ''} ${replacementMode ? 'replacement-mode' : ''}`}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDragLeave={() => setDragOverIndex(null)}
-              onDrop={(e) => handleDrop(e, index)}
+              className={`favorite-slot ${replacementMode ? 'replacement-mode' : ''}`}
               onClick={() => handleFavoriteSlotClick(index)}
             >
               {fav ? (
