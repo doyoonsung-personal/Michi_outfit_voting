@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -16,6 +16,9 @@ function App() {
   const [jumpTo, setJumpTo] = useState('');
   const [replacementMode, setReplacementMode] = useState(false);
   const [imageToReplace, setImageToReplace] = useState(null);
+  const modalContentRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
 
   useEffect(() => {
     fetch(API_URL)
@@ -87,23 +90,36 @@ function App() {
     }
   };
 
+  const handleMouseDown = (e) => {
+    if (modalContentRef.current) {
+        setIsDragging(true);
+        setDragStart({
+            x: e.pageX,
+            y: e.pageY,
+            scrollLeft: modalContentRef.current.scrollLeft,
+            scrollTop: modalContentRef.current.scrollTop,
+        });
+    }
+  };
+
+  const handleMouseMove = (e) => {
+      if (!isDragging || !modalContentRef.current) return;
+      e.preventDefault();
+      const x = e.pageX;
+      const y = e.pageY;
+      const walkX = x - dragStart.x;
+      const walkY = y - dragStart.y;
+      modalContentRef.current.scrollLeft = dragStart.scrollLeft - walkX;
+      modalContentRef.current.scrollTop = dragStart.scrollTop - walkY;
+  };
+
+  const handleMouseUp = () => {
+      setIsDragging(false);
+  };
+
   return (
     <div className="app-container">
       <main className="main-content">
-        <div className="jump-section">
-          <span>Go to number: </span>
-          <input
-            type="number"
-            value={jumpTo}
-            onChange={(e) => setJumpTo(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleJump()}
-            min="1"
-            max={images.length}
-            className="jump-input"
-            placeholder="#"
-          />
-          <button onClick={handleJump} className="jump-button">Go</button>
-        </div>
         <div className="carousel-container">
           {images.length > 0 ? (
             <Swiper
@@ -136,6 +152,20 @@ function App() {
           )}
         </div>
         <div className="add-to-favorites-section">
+          <div className="jump-section">
+            <span>Go to number: </span>
+            <input
+              type="number"
+              value={jumpTo}
+              onChange={(e) => setJumpTo(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleJump()}
+              min="1"
+              max={images.length}
+              className="jump-input"
+              placeholder="#"
+            />
+            <button onClick={handleJump} className="jump-button">Go</button>
+          </div>
           {!replacementMode ? (
             <button onClick={handleAddToFavorites} className="jump-button">Add to Favorites</button>
           ) : (
@@ -174,7 +204,15 @@ function App() {
 
       {selectedImage && (
         <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
-          <div className="modal-content">
+          <div
+            className="modal-content"
+            ref={modalContentRef}
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
             <img src={selectedImage.image_url} alt={selectedImage.theme} />
           </div>
         </div>
