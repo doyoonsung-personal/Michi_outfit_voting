@@ -10,7 +10,7 @@ const API_URL = 'https://art-gallery-api.doyoonsung.workers.dev/';
 
 function App() {
   const [images, setImages] = useState([]);
-  const [favorites, setFavorites] = useState(Array(5).fill(null)); // Changed to 5
+  const [favorites, setFavorites] = useState(Array(5).fill(null));
   const [selectedImage, setSelectedImage] = useState(null);
   const [swiper, setSwiper] = useState(null);
   const [jumpTo, setJumpTo] = useState('');
@@ -25,7 +25,6 @@ function App() {
   useEffect(() => {
     const savedFavorites = localStorage.getItem('art-favorites');
     if (savedFavorites) {
-      // Make sure loaded favorites match the new size
       const loaded = JSON.parse(savedFavorites);
       const resized = Array(5).fill(null);
       for(let i = 0; i < 5; i++) {
@@ -64,7 +63,7 @@ function App() {
   const handleJump = () => {
     const imageNumber = parseInt(jumpTo, 10);
     if (swiper && imageNumber > 0 && imageNumber <= images.length) {
-      swiper.slideToLoop(imageNumber - 1); // Use slideToLoop for loop mode
+      swiper.slideToLoop(imageNumber - 1);
     }
   };
 
@@ -73,17 +72,31 @@ function App() {
       <div className="app-container">
         <main className="main-content">
           <h1>Art Gallery</h1>
+          <div className="jump-section">
+            <input
+              type="number"
+              value={jumpTo}
+              onChange={(e) => setJumpTo(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleJump()}
+              min="1"
+              max={images.length}
+              className="jump-input"
+              placeholder="#"
+            />
+            <button onClick={handleJump} className="jump-button">Go</button>
+          </div>
           <Droppable droppableId="carousel" direction="horizontal" isDropDisabled={true}>
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef} className="carousel-container">
                 <Swiper
                   modules={[Navigation]}
+                  navigation={true}
                   spaceBetween={50}
                   slidesPerView={1}
                   className="art-carousel"
                   onSwiper={setSwiper}
                   allowTouchMove={false}
-                  loop={true} // Enable looping
+                  loop={true}
                 >
                   {images.map((image, index) => (
                     <SwiperSlide key={image.id}>
@@ -111,23 +124,6 @@ function App() {
               </div>
             )}
           </Droppable>
-          <div className="navigation-controls">
-            <button onClick={() => swiper?.slidePrev()} className="nav-button">Prev</button>
-            <div className="jump-section">
-              <input
-                type="number"
-                value={jumpTo}
-                onChange={(e) => setJumpTo(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleJump()}
-                min="1"
-                max={images.length}
-                className="jump-input"
-                placeholder="#"
-              />
-              <button onClick={handleJump} className="jump-button">Go</button>
-            </div>
-            <button onClick={() => swiper?.slideNext()} className="nav-button">Next</button>
-          </div>
         </main>
 
         <aside className="favorites-sidebar">

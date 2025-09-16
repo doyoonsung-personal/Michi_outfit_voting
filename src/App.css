@@ -19,7 +19,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 0; /* Allow shrinking */
+  min-height: 0;
 }
 
 .favorites-sidebar {
@@ -35,7 +35,7 @@ body {
 
 h1, h2 {
   color: #333;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 
 .carousel-container {
@@ -43,8 +43,9 @@ h1, h2 {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  flex-grow: 1; /* Allow growing */
-  min-height: 0; /* Allow shrinking */
+  flex-grow: 1;
+  min-height: 0;
+  position: relative; /* For swiper button positioning */
 }
 
 .art-carousel {
@@ -54,7 +55,7 @@ h1, h2 {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   user-select: none;
-  height: 100%; /* Fill available space */
+  height: 100%;
 }
 
 .art-item {
@@ -69,14 +70,14 @@ h1, h2 {
 .art-item img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* Fit image within the box */
+  object-fit: contain;
   border-radius: 4px;
 }
 
 .art-info {
   text-align: center;
   color: #555;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
   margin-top: 0.5rem;
 }
 
@@ -168,27 +169,22 @@ h1, h2 {
   cursor: default;
 }
 
-.modal-content button {
-  margin-top: 1rem;
-  padding: 8px 16px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.navigation-controls {
+.jump-section {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 600px;
-  max-width: 90vw;
-  margin-top: 1rem;
-  flex-shrink: 0; /* Prevent shrinking */
+  gap: 8px;
+  margin-bottom: 1rem; /* Spacing */
 }
 
-.nav-button, .jump-button {
+.jump-input {
+  width: 60px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.jump-button {
   padding: 8px 16px;
   border: none;
   background-color: #007bff;
@@ -198,20 +194,11 @@ h1, h2 {
   font-size: 1rem;
 }
 
-.nav-button:hover, .jump-button:hover {
+.jump-button:hover {
   background-color: #0056b3;
 }
 
-.jump-section {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.jump-input {
-  width: 60px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  text-align: center;
+/* Swiper Button Styling */
+:root {
+  --swiper-navigation-color: #007bff;
 }
