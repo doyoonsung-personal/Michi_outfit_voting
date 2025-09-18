@@ -87,12 +87,18 @@ body {
   cursor: pointer; /* Changed from grab */
 }
 
-.art-item img {
+.art-image-wrapper {
   max-width: 100%;
   max-height: 85%;
-  object-fit: contain;
   border-radius: 8px;
+  overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.art-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .art-info p {

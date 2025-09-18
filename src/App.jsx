@@ -131,11 +131,6 @@ function App() {
               className="art-carousel"
               onSwiper={setSwiper}
               allowTouchMove={true} // Re-enable swiping
-              preloadImages={false}
-              lazy={{
-                loadPrevNext: true,
-                loadPrevNextAmount: 5,
-              }}
             >
               {images.map((image) => (
                 <SwiperSlide key={image.id}>
@@ -143,8 +138,9 @@ function App() {
                     className="art-item"
                     onClick={() => setSelectedImage(image)}
                   >
-                    <img data-src={image.image_url} alt={image.theme} className="swiper-lazy" />
-                    <div className="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
+                    <div className="art-image-wrapper">
+                      <img src={image.image_url} alt={image.theme} />
+                    </div>
                     <div className="art-info">
                       <p><strong>#{image.id}</strong> {image.theme || 'Untitled'}</p>
                       <p>by {image.artist || 'Unknown Artist'}</p>
