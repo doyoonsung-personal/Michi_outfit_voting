@@ -1,14 +1,14 @@
 /* General App Styling */
 body {
   margin: 0;
-  background-color: #4B0082; /* Deep purple */
+  background-color: #3A006A; /* Deeper purple */
   font-family: 'Caveat', cursive;
   color: white; /* Default text color */
 }
 
 :root {
-  --swiper-navigation-color: #DDA0DD; /* Plum */
-  --swiper-pagination-color: #DDA0DD;
+  --swiper-navigation-color: #C7A3C7; /* Deeper Plum */
+  --swiper-pagination-color: #C7A3C7;
 }
 
 .app-container {
@@ -41,7 +41,7 @@ body {
   border-radius: 4px;
   text-align: center;
   font-family: 'Caveat', cursive;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
 }
@@ -53,16 +53,16 @@ body {
 .jump-button {
   padding: 8px 16px;
   border: none;
-  background-color: #DDA0DD; /* Plum */
-  color: #4B0082; /* Indigo */
+  background-color: #C7A3C7; /* Deeper Plum */
+  color: #3A006A; /* Deeper Indigo */
   border-radius: 4px;
   cursor: pointer;
   font-family: 'Caveat', cursive;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
 }
 
 .jump-button:hover {
-  background-color: #BA55D3; /* MediumOrchid */
+  background-color: #A54CA5; /* Deeper MediumOrchid */
 }
 
 .carousel-container {
@@ -96,7 +96,7 @@ body {
 }
 
 .art-info p {
- font-size: 1.4rem;
+ font-size: 1.8rem;
  color: white;
 }
 
@@ -111,7 +111,7 @@ body {
 }
 
 .favorites-sidebar h2 {
-  font-size: 2rem;
+  font-size: 2.6rem;
   color: white;
 }
 
@@ -133,8 +133,8 @@ body {
 }
 
 .favorite-slot.replacement-mode {
-  border: 2px solid #DDA0DD; /* Highlight with theme color */
-  box-shadow: 0 0 10px #DDA0DD;
+  border: 2px solid #C7A3C7; /* Highlight with theme color */
+  box-shadow: 0 0 10px #C7A3C7;
   cursor: pointer;
   animation: pulse 1s infinite alternate;
 }
@@ -160,12 +160,12 @@ body {
   color: white;
   padding: 2px 6px;
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 
 .empty-slot {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 2rem;
+  font-size: 2.6rem;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -222,7 +222,7 @@ body {
   gap: 10px;
   margin-top: 1rem;
   color: white;
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   text-align: center;
 }
 
@@ -234,7 +234,7 @@ body {
   background-color: rgba(0, 0, 0, 0.3); /* Add a background for better visibility */
   border-radius: 50%; /* Make them round */
   color: var(--swiper-navigation-color); /* Use theme color */
-  font-size: 1.5rem; /* Make arrows larger */
+  font-size: 2rem; /* Make arrows larger */
   transition: background-color 0.3s ease;
 }
 
