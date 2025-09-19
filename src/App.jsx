@@ -221,7 +221,7 @@ function App() {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
           >
-            <img src={selectedImage.image_url} alt={selectedImage.theme} />
+            <img src={selectedImage.image_url} alt={selectedImage.theme} onDragStart={(e) => e.preventDefault()} />
           </div>
         </div>
       )}
