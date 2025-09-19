@@ -18,6 +18,7 @@ function App() {
   const [imageToReplace, setImageToReplace] = useState(null);
   const modalContentRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  const dragStartPos = useRef({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
 
   useEffect(() => {
@@ -93,6 +94,7 @@ function App() {
   const handleMouseDown = (e) => {
     if (modalContentRef.current) {
         setIsDragging(true);
+        dragStartPos.current = { x: e.pageX, y: e.pageY };
         setDragStart({
             x: e.pageX,
             y: e.pageY,
@@ -113,8 +115,13 @@ function App() {
       modalContentRef.current.scrollTop = dragStart.scrollTop - walkY;
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
       setIsDragging(false);
+      const dragEndPos = { x: e.pageX, y: e.pageY };
+      const moved = Math.abs(dragStartPos.current.x - dragEndPos.x) > 3 || Math.abs(dragStartPos.current.y - dragEndPos.y) > 3;
+      if (!moved) {
+        setSelectedImage(null);
+      }
   };
 
   return (
@@ -205,11 +212,10 @@ function App() {
       </aside>
 
       {selectedImage && (
-        <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
+        <div className="modal-backdrop">
           <div
             className="modal-content"
             ref={modalContentRef}
-            onClick={(e) => e.stopPropagation()}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
