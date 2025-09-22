@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
+import { Navigation, Virtual } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
+import 'swiper/css/virtual';
 import './App.css';
 
 const API_URL = 'https://art-gallery-api.doyoonsung.workers.dev/';
@@ -10,6 +11,7 @@ const FAVORITES_SIZE = 5;
 
 function App() {
   const [images, setImages] = useState([]);
+  const [loadedSlides, setLoadedSlides] = useState({});
   const [favorites, setFavorites] = useState(Array(FAVORITES_SIZE).fill(null));
   const [selectedImage, setSelectedImage] = useState(null);
   const [swiper, setSwiper] = useState(null);
@@ -21,10 +23,28 @@ function App() {
   const dragStartPos = useRef({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
 
+  const loadSlides = (swiperInstance) => {
+    const { from, to } = swiperInstance.virtual;
+    const newLoadedSlides = { ...loadedSlides };
+    for (let i = from; i <= to; i++) {
+      if (!newLoadedSlides[i]) {
+        newLoadedSlides[i] = images[i];
+      }
+    }
+    setLoadedSlides(newLoadedSlides);
+  };
+
   useEffect(() => {
     fetch(API_URL)
       .then(res => res.json())
-      .then(data => setImages(data))
+      .then(data => {
+        setImages(data);
+        const initialSlides = {};
+        for (let i = 0; i < Math.min(data.length, 5); i++) {
+          initialSlides[i] = data[i];
+        }
+        setLoadedSlides(initialSlides);
+      })
       .catch(err => console.error("Failed to fetch images:", err));
   }, []);
 
@@ -130,29 +150,50 @@ function App() {
         <div className="carousel-container">
           {images.length > 0 ? (
             <Swiper
-              modules={[Navigation]}
+              modules={[Navigation, Virtual]}
               navigation
               loop
               spaceBetween={50}
               slidesPerView={1}
               className="art-carousel"
-              onSwiper={setSwiper}
-              allowTouchMove={true} // Re-enable swiping
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              virtual
+              onSlideChange={(swiper) => {
+                const proximity = 4;
+                const newLoadedSlides = { ...loadedSlides };
+                let changed = false;
+                for (let i = swiper.realIndex - proximity; i <= swiper.realIndex + proximity; i++) {
+                  const loopedIndex = (i + images.length) % images.length;
+                  if (!newLoadedSlides[loopedIndex] && images[loopedIndex]) {
+                    newLoadedSlides[loopedIndex] = images[loopedIndex];
+                    changed = true;
+                  }
+                }
+                if (changed) {
+                  setLoadedSlides(newLoadedSlides);
+                }
+              }}
             >
-              {images.map((image) => (
-                <SwiperSlide key={image.id}>
-                  <div
-                    className="art-item"
-                    onClick={() => setSelectedImage(image)}
-                  >
-                    <div className="art-image-wrapper">
-                      <img src={image.image_url} alt={image.theme} />
+              {images.map((image, index) => (
+                <SwiperSlide key={image.id} virtualIndex={index}>
+                  {loadedSlides[index] ? (
+                    <div
+                      className="art-item"
+                      onClick={() => setSelectedImage(image)}
+                    >
+                      <div className="art-image-wrapper">
+                        <img src={image.image_url} alt={image.theme} />
+                      </div>
+                      <div className="art-info">
+                        <p><strong>#{image.id}</strong> {image.theme || 'Untitled'}</p>
+                        <p>by {image.artist || 'Unknown Artist'}</p>
+                      </div>
                     </div>
-                    <div className="art-info">
-                      <p><strong>#{image.id}</strong> {image.theme || 'Untitled'}</p>
-                      <p>by {image.artist || 'Unknown Artist'}</p>
-                    </div>
-                  </div>
+                  ) : (
+                    <div className="art-item">Loading...</div>
+                  )}
                 </SwiperSlide>
               ))}
             </Swiper>
